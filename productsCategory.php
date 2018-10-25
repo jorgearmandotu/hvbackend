@@ -6,7 +6,8 @@
  $db = new DataDb();
  $mbd = $db->connect();
  $consulta = $db->allProductsCategory($mbd);
- print_r($consulta);
+ $json = json_encode($consulta, JSON_UNESCAPED_UNICODE);
+ print_r($json);
 
 header('Content-type: application/json');
 header("Access-Control-Allow-Origin: *");

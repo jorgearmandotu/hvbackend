@@ -92,28 +92,23 @@ class DataDb{
 	}
 
 	function allProductsCategory($mbd){
-		$res= '[';
 		$categoria=array();
 		$productos=array();
-		$consult=null;
+		$res = array();
 		try{
 			$consult= $mbd->query('select * from categoria');
 			foreach($consult as $cons){
 				$products = $mbd->query('select * from products where category='.$cons['id']);
-				$res.= '{"id":"'.$cons['id'].'","nombre":"'.$cons['nombre'].'","products":[';
 				foreach($products as $pro){
 					array_push($productos, $pro);
-					$res.='{"Idproduct":"'.$pro['Idproduct'].'","nameProduct":"'.$pro['nameProduct'].'","descriptionProduct":"'.$pro['descriptionProduct'].'","price":"'.$pro['price'].'","urlImage":"'.$pro['urlImage'].'","category":"'.$pro['category'].'"},';
 				}
-				$res.=']},';
-				array_push($categoria, $cons);
-				$x = array('productos'=>$productos);
-				print('<br><br>');
-				array_merge($categoria, $x);
-				$productos= array();
-				$categoria = array();
-			}
-			$res.=']';
+				$categoria['id']=$cons['id'];
+				$categoria['nombre']=$cons['nombre'];
+				$categoria['products']=$productos;
+				
+				array_push($res, $categoria);
+				$productos = array();
+			}	
 		}catch (PDOException $e){
 			print "error: ".$e.getMessage();
 			die();
