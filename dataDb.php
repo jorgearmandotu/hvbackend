@@ -90,6 +90,22 @@ class DataDb{
 		}
 		return $res;
 	}
+	function getProduct($mbd, $id){
+		$res = array();
+		$consult = null;
+		try{
+			$datos = new DataValues();
+			$consult = $mbd->query('SELECT * FROM products WHERE Idproduct = "'.$id.'"');
+			foreach($consult as $cons){
+				array_push($res, $cons);
+			}
+		}catch (PDOExceptio $e){
+			"¡Error!: " . $e->getMessage() . "<br/>";
+    		die();
+    		$mbd = null;
+		}
+		return $res;
+	}
 
 	function allProductsCategory($mbd){
 		$categoria=array();
@@ -98,7 +114,7 @@ class DataDb{
 		try{
 			$consult= $mbd->query('select * from categoria');
 			foreach($consult as $cons){
-				$products = $mbd->query('select * from products where category='.$cons['id']);
+				$products = $mbd->query('select Idproduct, nameProduct, descriptionProduct, price, urlImage from products where category='.$cons['id']);
 				foreach($products as $pro){
 					array_push($productos, $pro);
 				}
