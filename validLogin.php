@@ -8,11 +8,10 @@ ob_start();
 function validarsession(){
     session_start();
     if(isset($_SESSION['user'])){
-        return true;
-    }else{ return false; }
+        return $_SESSION['user'];
+    }else{ return "no valido"; }
 }
-$res = array();
-array_push($res, array('status'=>validarsession()));
+$res = array('status'=>validarsession());
 $jsonrest = json_encode($res);
 print_r($jsonrest);
 
