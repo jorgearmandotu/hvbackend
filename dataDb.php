@@ -90,14 +90,32 @@ class DataDb{
 		}
 		return $res;
 	}
+	function getCartBuy($mbd, $user){
+		$res;
+		$consult = null;
+		$sql = 'SELECT shopping FROM shoppingcart WHERE user = '.$user;
+		$consult = $mbd->query($sql);
+		foreach($consult as $cons){
+			$res = $cons;
+		}
+		return $res;
+	}
 	function getProduct($mbd, $id){
-		$res = array();
+		$res;
 		$consult = null;
 		try{
 			$datos = new DataValues();
 			$consult = $mbd->query('SELECT * FROM products WHERE Idproduct = "'.$id.'"');
 			foreach($consult as $cons){
-				array_push($res, $cons);
+				//array_push($res, $cons);
+				$product = array('Idproduct'=>$cons['Idproduct'],
+						'nameProduct'=>$cons['nameProduct'],
+						'descriptionProduct'=>$cons['descriptionProduct'],
+						'allDescriptionProduct'=>$cons['allDescriptionProduct'],
+						'price'=>$cons['price'],
+						'urlImage'=>$cons['urlImage'],
+						'category'=>$cons['category']);
+				$res = $product;
 			}
 		}catch (PDOExceptio $e){
 			"¡Error!: " . $e->getMessage() . "<br/>";
@@ -170,6 +188,30 @@ function login($mbd, $user, $pass){
 		//$res=null;
 	}
 	return $res;
+	}
+
+	function register($mbd, $names, $lastNames, $identificacion, $email, $user, $password, $phone){
+		$res = false;
+		try {
+			$mbd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$consult = 'INSERT into users VALUES(?, ?, ?, ?,? ,?,?,?)';
+			$sentencia = $mbd->prepare($consult);
+			$sentencia->bindParam(1, $identificacion);
+			$sentencia->bindParam(2, $names);
+			$sentencia->bindParam(3, $lastNames);
+			$sentencia->bindParam(4, $email);
+			$sentencia->bindParam(5, $phone);
+			$sentencia->bindParam(6, $password);
+			$sentencia->bindParam(7, 0);
+			$sentencia->bindParam(8, $user);
+
+			//if ($sentencia->execute()) $res = true;
+		}catch(PDOException $e){
+			print "error: ".$e->getMessage();
+			die();
+			//$res=null;
+		}
+		return res;
 	}
 }
 
