@@ -132,7 +132,7 @@ class DataDb{
 		try{
 			$consult= $mbd->query('select * from categoria');
 			foreach($consult as $cons){
-				$products = $mbd->query('select Idproduct, nameProduct, descriptionProduct, price, urlImage from products where category='.$cons['id']);
+				$products = $mbd->query('select Idproduct, nameProduct, allDescriptionProduct, price, urlImage from products where category='.$cons['id']);
 				foreach($products as $pro){
 					array_push($productos, $pro);
 				}
@@ -196,22 +196,21 @@ function login($mbd, $user, $pass){
 			$mbd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$consult = 'INSERT into users VALUES(?, ?, ?, ?,? ,?,?,?)';
 			$sentencia = $mbd->prepare($consult);
+			$admin = 0;
 			$sentencia->bindParam(1, $identificacion);
 			$sentencia->bindParam(2, $names);
 			$sentencia->bindParam(3, $lastNames);
 			$sentencia->bindParam(4, $email);
 			$sentencia->bindParam(5, $phone);
 			$sentencia->bindParam(6, $password);
-			$sentencia->bindParam(7, 0);
+			$sentencia->bindParam(7, $admin);
 			$sentencia->bindParam(8, $user);
 
-			//if ($sentencia->execute()) $res = true;
+			if ($sentencia->execute()) $res = true;
 		}catch(PDOException $e){
-			print "error: ".$e->getMessage();
-			die();
-			//$res=null;
+			$res = false;
 		}
-		return res;
+		return $res;
 	}
 }
 
