@@ -19,19 +19,28 @@ function login(){
   if($json != ''){
     $obj = json_decode($json);
     if (isset($obj->user) && isset($obj->password)){
-      $consulta = $db->login($mbd, $obj->user, $obj->password);
+      $user = $obj->user;
+      $password = $obj->password;
+      $user = htmlentities(addslashes(trim(strip_tags($user))));
+      $password = htmlentities(addslashes(trim(strip_tags($password))));
+      $consulta = $db->login($mbd, $user, $password);
         if($consulta->rowCount() == 1){
+          foreach($consulta as $consult){
             if(!isset($_SESSION['user'])){
-              $_SESSION['user']=$obj->user;
-              $_SESSION['tipo']='admin';
+              $_SESSION['user']=$consult['user'];
+              $_SESSION['tipo']=$consult['administrador'];//$consult->administrador;
+              $_SESSION['id']=$consult['IdUser'];
               return true;
             }
+          }
+            
           }else { return false;}
         }else { return false;
           }
   }else{
-    if(isset($_SESSION['tipo'])){
-      return $_SESSION['user'];
+    if(isset($_SESSION['user'])){
+      return $_SESSION['tipo'];//retorno tipo para saber si es administrador o usuario normal
+      //return true;
     }else{
       return false;
     }

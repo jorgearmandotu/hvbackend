@@ -91,12 +91,12 @@ class DataDb{
 		return $res;
 	}
 	function getCartBuy($mbd, $user){
-		$res;
+		$res = false;
 		$consult = null;
 		$sql = 'SELECT shopping FROM shoppingcart WHERE user = '.$user;
 		$consult = $mbd->query($sql);
 		foreach($consult as $cons){
-			$res = $cons;
+			$res = $cons['shopping'];
 		}
 		return $res;
 	}
@@ -174,14 +174,14 @@ function login($mbd, $user, $pass){
 	$res=null;
 	try{
 		$mbd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$consult = 'select * from Users where user= :user and password= :pass';
+		$consult = 'select IdUser, user, administrador from Users where user= :user and password= :pass';
 		$res=$mbd->prepare($consult);
 		$usuario = htmlentities(addslashes(trim(strip_tags($user))));
 		$pwd = htmlentities(addslashes(trim(strip_tags($pass))));
 		$res->bindValue(":user", $usuario);
 		$res->bindValue(":pass", $pwd);
 		$res->execute();
-		$conta= $res->rowCount();
+		//$conta= $res->rowCount();
 	}catch(PDOException $e){
 		print "error: ".$e->getMessage();
 		die();
@@ -211,6 +211,11 @@ function login($mbd, $user, $pass){
 			$res = false;
 		}
 		return $res;
+	}
+
+	function addCar($mbd, $carr, $user){
+		$sql = 'INSERT INTO shoppingcart (user, shopping) VALUES ("'.$user.'", "'.$carr.'")';
+		$consult = $mbd->query($sql);
 	}
 }
 

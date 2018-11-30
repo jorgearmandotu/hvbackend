@@ -13,7 +13,7 @@ class Post{
 	function setId($id) { $this->id = $id; }
 	function getId() { return $this->id; }
 	function setTitle($title) { $this->title = $title; }
-	function getTitlw() { return $this->title; }
+	function getTitle() { return $this->title; }
 	function setAutor($autor) { $this->autor = $autor; }
 	function getAutor() { return $this->autor; }
 	function setDatePost($datePost) { $this->datePost = $datePost; }
