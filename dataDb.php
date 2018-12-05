@@ -55,7 +55,7 @@ class DataDb{
 		}
 		return $res;
 	}
-
+	
 	function allCategorys($mbd){
 		$res = array();
 		$consult = null;
@@ -169,25 +169,59 @@ class DataDb{
 		return $res;
 	}
 
-
-function login($mbd, $user, $pass){
-	$res=null;
-	try{
-		$mbd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$consult = 'select IdUser, user, administrador from Users where user= :user and password= :pass';
-		$res=$mbd->prepare($consult);
-		$usuario = htmlentities(addslashes(trim(strip_tags($user))));
-		$pwd = htmlentities(addslashes(trim(strip_tags($pass))));
-		$res->bindValue(":user", $usuario);
-		$res->bindValue(":pass", $pwd);
-		$res->execute();
-		//$conta= $res->rowCount();
-	}catch(PDOException $e){
-		print "error: ".$e->getMessage();
-		die();
-		//$res=null;
+	function validUser($mbd, $user){
+		$res = null;
+		try{
+			$mbd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$consult = 'select user from Users where user= :user';
+			$res=$mbd->prepare($consult);
+			$usuario = htmlentities(addslashes(trim(strip_tags($user))));
+			$res->bindValue(":user", $user);
+			$res->execute();
+		}catch(PDOException $e){
+			print "error: ".$e->getMessage();
+			die();
+		}
+		return $res;
 	}
-	return $res;
+
+	public function validEmail($mbd, $email){
+		$res = null;
+		try{
+			$mbd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$consult = 'select email from Users where email= :email';
+			$res=$mbd->prepare($consult);
+			$usuario = htmlentities(addslashes(trim(strip_tags($email))));
+			$res->bindValue(":email", $email);
+			$res->execute();
+		}catch(PDOException $e){
+			print "error: ".$e->getMessage();
+			die();
+		}
+		return $res;
+	}
+
+	function login($mbd, $user, $sql){
+		$res=null;
+		//$mail = false;
+		
+		$usuario = htmlentities(addslashes(trim(strip_tags($user))));
+		try{
+			$mbd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			
+			
+			$res=$mbd->prepare($sql);
+			
+	
+			$res->bindValue(":user", $usuario);
+			$res->execute();
+			//$conta= $res->rowCount();
+		}catch(PDOException $e){
+			print "error: ".$e->getMessage();
+			die();
+			//$res=null;
+		}
+		return $res;
 	}
 
 	function register($mbd, $names, $lastNames, $identificacion, $email, $user, $password, $phone){
@@ -202,6 +236,7 @@ function login($mbd, $user, $pass){
 			$sentencia->bindParam(3, $lastNames);
 			$sentencia->bindParam(4, $email);
 			$sentencia->bindParam(5, $phone);
+			$password = password_hash($password, PASSWORD_DEFAULT);
 			$sentencia->bindParam(6, $password);
 			$sentencia->bindParam(7, $admin);
 			$sentencia->bindParam(8, $user);
@@ -237,6 +272,7 @@ print_r($dbas->getNameDb());
     	die();
 		}*/
 	//}
+
 ?>
     
     

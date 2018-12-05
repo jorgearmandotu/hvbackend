@@ -19,19 +19,29 @@ function login(){
   if($json != ''){
     $obj = json_decode($json);
     if (isset($obj->user) && isset($obj->password)){
-      $user = $obj->user;
+      $user = $obj->user;//usuario o email
       $password = $obj->password;
       $user = htmlentities(addslashes(trim(strip_tags($user))));
       $password = htmlentities(addslashes(trim(strip_tags($password))));
-      $consulta = $db->login($mbd, $user, $password);
+      $consult = 'select IdUser, user, administrador, password from Users where user= :user';
+      $email = $db->validEmail($mbd, $user);
+			foreach($email as $p){
+				//$mail = true;
+				$consult = 'select IdUser, user, administrador, password from Users where email= :user';
+			}
+      $consulta = $db->login($mbd, $user, $consult);
         if($consulta->rowCount() == 1){
           foreach($consulta as $consult){
-            if(!isset($_SESSION['user'])){
-              $_SESSION['user']=$consult['user'];
-              $_SESSION['tipo']=$consult['administrador'];//$consult->administrador;
-              $_SESSION['id']=$consult['IdUser'];
-              return true;
-            }
+            if(password_verify($password, $consult['password'])){
+              if(!isset($_SESSION['user'])){
+                $_SESSION['user']=$consult['user'];
+                $_SESSION['tipo']=$consult['administrador'];//$consult->administrador;
+                $_SESSION['id']=$consult['IdUser'];
+                return true;
+              }
+
+            }else { return false; }
+            
           }
             
           }else { return false;}
@@ -39,8 +49,8 @@ function login(){
           }
   }else{
     if(isset($_SESSION['user'])){
-      return $_SESSION['tipo'];//retorno tipo para saber si es administrador o usuario normal
-      //return true;
+      //return $_SESSION['tipo'];//retorno tipo para saber si es administrador o usuario normal
+      return true;
     }else{
       return false;
     }
